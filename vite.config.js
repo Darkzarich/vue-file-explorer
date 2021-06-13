@@ -1,5 +1,6 @@
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
+import { builtinModules } from 'module';
 
 // https://vitejs.dev/config/
 const commonConfig = {
@@ -7,6 +8,12 @@ const commonConfig = {
   root: './renderer',
   resolve: {
     extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
+  },
+  build: {
+    outDir: '../dist',
+    rollupOptions: {
+      external: ['electron', ...builtinModules],
+    },
   },
 };
 

@@ -1,30 +1,34 @@
-const { app, BrowserWindow, dialog } = require('electron');
+const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
+const { readdir } = require('fs/promises');
+const URL = require('url').URL;
 
-const isDev = process.env.NODE_ENV === 'development' ? true : false;
-
-if (isDev) {
-  // require('electron-reload')(path.resolve(__dirname, './dist/'));
-}
+const IS_DEV = process.env.NODE_ENV === 'development' ? true : false;
+const APP_URL = IS_DEV
+  ? 'http://localhost:3000/'
+  : `file://${path.resolve(__dirname, 'dist', 'index.html')}`;
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+    },
+    nodeIntegration: false,
+    contextIsolation: true,
+    resizable: false,
   });
 
-  win.loadURL(
-    isDev
-      ? 'http://localhost:3000/'
-      : `file://${path.resolve(__dirname, 'dist', 'index.html')}`
-  );
+  win.loadURL(APP_URL);
 
   win.webContents.on('did-fail-load', () => {
-    if (isDev) {
+    if (IS_DEV) {
       dialog.showErrorBox(
         'The dev server is not up!',
         'There is no dev server currently running on port 3000.'
       );
+      app.exit();
     }
   });
 }
@@ -42,5 +46,35 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+// Restrict navigation from the current page
+app.on('web-contents-created', (event, contents) => {
+  contents.on('will-navigate', (event, navigationUrl) => {
+    const parsedUrl = new URL(navigationUrl);
+
+    if (parsedUrl.origin !== APP_URL) {
+      event.preventDefault();
+    }
+  });
+});
+
+// Exposed to renderer API
+ipcMain.on('read-folder', async (event, props) => {
+  try {
+    const folder = await readdir(path.join(__dirname, '../'), {
+      withFileTypes: true,
+    });
+
+    event.reply('read-folder', {
+      success: true,
+      data: folder,
+    });
+  } catch (e) {
+    event.reply('read-folder', {
+      success: false,
+      reason: `[main] ${e.message}`,
+    });
   }
 });

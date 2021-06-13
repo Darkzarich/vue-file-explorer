@@ -19,5 +19,10 @@ export default {
   data: () => ({
     //
   }),
+  async created() {
+    const files = await window.ipc.request('read-folder');
+
+    console.log(files);
+  },
 };
 </script>
