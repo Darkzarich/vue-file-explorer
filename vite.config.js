@@ -1,9 +1,12 @@
-import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-const path = require('path');
+import path from 'path';
 
+// https://vitejs.dev/config/
 const commonConfig = {
   plugins: [vue()],
+  resolve: {
+    extensions: ['.js', '.json', '.jsx', '.mjs', '.ts', '.tsx', '.vue'],
+  },
 };
 
 export default ({ command, mode }) => {
