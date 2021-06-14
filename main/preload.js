@@ -1,13 +1,13 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-const validIpcEvents = ['read-folder'];
+const validEventNames = ['read-folder'];
 
-const request = (event, props) => {
+const request = (eventName, props) => {
   return new Promise((resolve, reject) => {
-    if (validIpcEvents.includes(event)) {
-      ipcRenderer.send(event, props);
+    if (validEventNames.includes(eventName)) {
+      ipcRenderer.send(eventName, props);
       // Deliberately strip event as it includes `sender`
-      ipcRenderer.once(event, (event, data) => {
+      ipcRenderer.once(eventName, (event, data) => {
         if (data.success) {
           resolve(data);
         } else {
