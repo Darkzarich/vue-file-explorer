@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "scripts": {
-    "dev": "concurrently \"npm run app:dev\" \"npm run electron:dev\"",
+    "dev": "concurrently --kill-others \"npm run app:dev\" \"npm run electron:dev\"",
     "app:dev": "vite",
     "app:preview": "vite preview",
     "app:build": "vite build",
@@ -11,8 +11,7 @@
   "dependencies": {
     "@mdi/font": "5.9.55",
     "roboto-fontface": "*",
-    "vue": "^3.0.5",
-    "vuetify": "^3.0.0-alpha.0"
+    "vue": "^3.0.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.2.3",

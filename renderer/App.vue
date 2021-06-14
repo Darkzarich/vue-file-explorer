@@ -1,28 +1,30 @@
 <template>
-  <v-app>
-    <v-main>
-      <HelloWorld />
-    </v-main>
-  </v-app>
+  <div>
+    <pre>
+      {{ files }}
+    </pre>
+  </div>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
-
 export default {
   name: "App",
-
-  components: {
-    HelloWorld,
+  data() {
+    return {
+      files: null,
+    };
   },
+  created() {
+    this.init();
+  },
+  methods: {
+    async init() {
+      this.files = await window.ipc.request("read-folder", {
+        path: "/",
+      });
 
-  data: () => ({
-    //
-  }),
-  async created() {
-    const files = await window.ipc.request('read-folder');
-
-    console.log(files);
+      console.log(this.files);
+    },
   },
 };
 </script>
