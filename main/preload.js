@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
+const { GET_DISKS, READ_FOLDER } = require('./api/types');
 
-const validEventNames = ['read-folder'];
+const validEventNames = [READ_FOLDER, GET_DISKS];
 
 const request = (eventName, props) => {
   return new Promise((resolve, reject) => {
@@ -27,4 +28,5 @@ const request = (eventName, props) => {
 // the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld('ipc', {
   request,
+  system: process.platform,
 });

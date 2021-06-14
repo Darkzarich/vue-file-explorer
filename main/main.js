@@ -1,10 +1,7 @@
 const { app, BrowserWindow, dialog, ipcMain } = require('electron');
 const path = require('path');
-const fsPromises = require('fs/promises');
-const fs = require('fs');
 const URL = require('url').URL;
 
-const IS_WIN = process.platform === 'win32';
 const IS_DEV = process.env.NODE_ENV === 'development' ? true : false;
 const APP_URL = IS_DEV
   ? 'http://localhost:3000/'
@@ -62,49 +59,4 @@ app.on('web-contents-created', (event, contents) => {
   });
 });
 
-// Exposed to renderer API
-ipcMain.on('read-folder', async (event, props) => {
-  try {
-    const infoArray = [];
-    const normalizedPath = path.resolve(path.normalize(props.path));
-    const symLinks = await fsPromises.readdir(normalizedPath, {
-      withFileTypes: true,
-    });
-
-    for (const file of symLinks) {
-      const commonInfo = {
-        name: file.name,
-        extension: file.name.slice(file.name.lastIndexOf('.')),
-      };
-
-      try {
-        const info = fs.statSync(path.join(normalizedPath, file.name));
-
-        infoArray.push({
-          ...commonInfo,
-          folder: info.isDirectory(),
-          ...info,
-        });
-      } catch (e) {
-        // permission error when trying to get info
-        if (e.code === 'EPERM') {
-          infoArray.push({
-            ...commonInfo,
-            protected: true,
-          });
-        }
-      }
-    }
-
-    event.reply('read-folder', {
-      success: true,
-      data: infoArray,
-    });
-  } catch (e) {
-    console.error(e);
-    event.reply('read-folder', {
-      success: false,
-      reason: `[main] ${e.message}`,
-    });
-  }
-});
+require('./api/index.js');
