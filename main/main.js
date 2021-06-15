@@ -59,4 +59,22 @@ app.on('web-contents-created', (event, contents) => {
   });
 });
 
+// install vue devtools
+if (IS_DEV) {
+  app.on('ready', () => {
+    let installExtension = require('electron-devtools-installer');
+
+    installExtension
+      .default(installExtension.VUEJS3_DEVTOOLS, {
+        loadExtensionOptions: {
+          allowFileAccess: true,
+        },
+      })
+      .then(() => {})
+      .catch((err) => {
+        console.log('Unable to install `vue-devtools`: \n', err);
+      });
+  });
+}
+
 require('./api/index.js');
