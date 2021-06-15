@@ -2,7 +2,7 @@
   <div>
     <div class="loader" v-if="loading">...Loading</div>
     <div v-else class="folder-list">
-      <template v-if="(isWindows && isRoot) || !isRoot">
+      <template v-if="(isWindows && isRoot) || (!isRoot && path)">
         <FolderListItem name=".." @click="goOneLevelUp()" />
       </template>
 
@@ -17,7 +17,7 @@
         <FolderListItem
           v-for="drive in drives"
           :name="drive"
-          @click="goOneLevelDown(drive)"
+          @click="goOneLevelDown(drive, true)"
         />
       </template>
     </div>
@@ -38,7 +38,7 @@ export default {
       path: "/",
       folder: null,
       drives: [],
-      loading: false,
+      loading: true,
     };
   },
   created() {
@@ -49,28 +49,21 @@ export default {
       return /^(.+:)?\/$/m.test(this.path);
     },
   },
-  watch: {
-    path(newPath) {
-      if (newPath) {
-        this.requestFolder(newPath);
-      }
-    },
-  },
   methods: {
     async init() {
-      this.loading = true;
       if (this.isWindows) {
         await this.requestDrives();
       }
       await this.requestFolder(this.path);
-      this.loading = false;
     },
     async requestFolder(path) {
+      this.loading = true;
       const res = await window.ipc.request("read-folder", {
         path,
       });
       if (res.success) {
         this.folder = res.data;
+        this.loading = false;
       }
     },
     async requestDrives() {
@@ -79,11 +72,21 @@ export default {
         this.drives = res.data;
       }
     },
-    goOneLevelUp() {
-      this.path = this.path.slice(0, this.path.lastIndexOf("/"));
+    async goOneLevelUp() {
+      if (!this.isRoot) {
+        // cut one part of the path
+        this.path = this.path.slice(0, this.path.lastIndexOf("/"));
+        return await this.requestFolder(this.path);
+      }
+      this.path = "";
     },
-    goOneLevelDown(name) {
-      this.path = this.path + `/${name}`;
+    async goOneLevelDown(name, isDrive = false) {
+      if (!isDrive) {
+        this.path = this.path + `/${name}`;
+      } else {
+        this.path = `${name}/`;
+      }
+      return await this.requestFolder(this.path);
     },
   },
 };
