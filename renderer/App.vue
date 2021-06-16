@@ -91,3 +91,36 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+body,
+#app {
+  font-family: "Roboto", sans-serif;
+  background: #2c2c2c;
+  color: #ffffff;
+  padding: 0;
+  margin: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.folder-list {
+  overflow-y: auto;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 8px;
+    background-color: #2c2c2c;
+    border-radius: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #797979;
+    border-radius: 10px;
+  }
+}
+</style>
