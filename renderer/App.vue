@@ -3,20 +3,20 @@
     <div class="loader" v-if="loading">...Loading</div>
     <div v-else class="folder-list">
       <template v-if="(isWindows && isRoot) || (!isRoot && path)">
-        <FolderListItem name=".." @click="goOneLevelUp()" />
+        <FolderListItem :folder-item="{ name: '..' }" @click="goOneLevelUp()" />
       </template>
 
       <template v-if="path">
         <FolderListItem
           v-for="item in folder"
-          :name="item.name"
+          :folder-item="item"
           @click="item.folder ? goOneLevelDown(item.name) : null"
         />
       </template>
       <template v-else-if="isWindows">
         <FolderListItem
           v-for="drive in drives"
-          :name="drive"
+          :folder-item="{ name: drive }"
           @click="goOneLevelDown(drive, true)"
         />
       </template>
