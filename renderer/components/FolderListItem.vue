@@ -64,6 +64,13 @@ export default {
         case ".exe":
         case ".msi":
           return "file-app";
+        case ".png":
+        case ".gif":
+        case ".jpg":
+        case ".svg":
+        case ".jpeg":
+        case ".bmp":
+          return "file-picture";
         case ".mp3":
         case ".wav":
         case ".ogg":
