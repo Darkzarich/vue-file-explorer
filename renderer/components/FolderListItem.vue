@@ -88,9 +88,15 @@ export default {
         case ".txt":
         case ".log":
         case ".md":
+        case ".rtf":
           return "file-text";
         case ".pdf":
           return "file-pdf";
+        case ".conf":
+        case ".ini":
+        case ".cfg":
+        case ".cf":
+          return "file-cog";
         default:
           return "file-unknown";
       }
