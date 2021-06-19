@@ -1,7 +1,7 @@
 <template>
   <div>
     <IconDefs />
-    <div class="loader" v-if="loading">...Loading</div>
+    <Loader v-if="loading" />
     <div v-else class="folder-list">
       <template v-if="(isWindows && isRoot) || (!isRoot && path)">
         <FolderListItem :folder-item="{ name: '..' }" @click="goOneLevelUp()" />
@@ -28,12 +28,14 @@
 <script>
 import FolderListItem from "./components/FolderListItem";
 import IconDefs from "./components/Base/IconDefs";
+import Loader from "./components/Loader";
 
 export default {
   name: "App",
   components: {
     FolderListItem,
     IconDefs,
+    Loader,
   },
   data() {
     return {
