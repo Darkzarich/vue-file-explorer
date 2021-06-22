@@ -63,9 +63,11 @@ export default {
     },
     async requestFolder(path) {
       this.loading = true;
+
       const res = await window.ipc.request("read-folder", {
         path,
       });
+
       if (res.success) {
         this.folder = res.data;
         this.loading = false;
