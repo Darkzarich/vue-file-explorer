@@ -2,26 +2,32 @@
   <div>
     <IconDefs />
     <Loader v-if="loading" />
-    <div v-else class="folder-list">
-      <template v-if="(isWindows && isRoot) || (!isRoot && path)">
-        <FolderListItem :folder-item="{ name: '..' }" @click="goOneLevelUp()" />
-      </template>
+    <template v-else>
+      <input type="text" class="current-folder" :value="path" />
+      <div class="folder-list">
+        <template v-if="(isWindows && isRoot) || (!isRoot && path)">
+          <FolderListItem
+            :folder-item="{ name: '..' }"
+            @click="goOneLevelUp()"
+          />
+        </template>
 
-      <template v-if="path">
-        <FolderListItem
-          v-for="item in folder"
-          :folder-item="item"
-          @click="item.folder ? goOneLevelDown(item.name) : null"
-        />
-      </template>
-      <template v-else-if="isWindows">
-        <FolderListItem
-          v-for="drive in drives"
-          :folder-item="{ name: drive, drive: true }"
-          @click="goOneLevelDown(drive, true)"
-        />
-      </template>
-    </div>
+        <template v-if="path">
+          <FolderListItem
+            v-for="item in folder"
+            :folder-item="item"
+            @click="item.folder ? goOneLevelDown(item.name) : null"
+          />
+        </template>
+        <template v-else-if="isWindows">
+          <FolderListItem
+            v-for="drive in drives"
+            :folder-item="{ name: drive, drive: true }"
+            @click="goOneLevelDown(drive, true)"
+          />
+        </template>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -110,6 +116,13 @@ body,
   height: 100vh;
   width: 100%;
   overflow: hidden;
+}
+
+.current-folder {
+  width: 100%;
+  background: #2c2c2c;
+  color: white;
+  border-bottom: 1px solid #797979;
 }
 
 .folder-list {
